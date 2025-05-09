@@ -18,6 +18,7 @@ import {
   timeFilter,
   tracesTableUiColumnDefinitions,
   type Observation,
+  TracingSearchType,
 } from "@langfuse/shared";
 import {
   traceException,
@@ -46,6 +47,7 @@ import { throwIfNoEntitlement } from "@/src/features/entitlements/server/hasEnti
 const TraceFilterOptions = z.object({
   projectId: z.string(), // Required for protectedProjectProcedure
   searchQuery: z.string().nullable(),
+  searchType: z.array(TracingSearchType),
   filter: z.array(singleFilter).nullable(),
   orderBy: orderBy,
   ...paginationZod,
@@ -54,9 +56,10 @@ type TraceFilterOptions = z.infer<typeof TraceFilterOptions>;
 
 export type ObservationReturnTypeWithMetadata = Omit<
   Observation,
-  "input" | "output"
+  "input" | "output" | "metadata"
 > & {
   traceId: string;
+  metadata: string | null;
 };
 
 export type ObservationReturnType = Omit<
@@ -81,6 +84,7 @@ export const traceRouter = createTRPCRouter({
         projectId: ctx.session.projectId,
         filter: input.filter ?? [],
         searchQuery: input.searchQuery ?? undefined,
+        searchType: input.searchType ?? ["id"],
         orderBy: input.orderBy,
         limit: input.limit,
         page: input.page,
@@ -90,14 +94,18 @@ export const traceRouter = createTRPCRouter({
   countAll: protectedProjectProcedure
     .input(TraceFilterOptions)
     .query(async ({ input, ctx }) => {
-      const totalCount = await getTracesTableCount({
+      const count = await getTracesTableCount({
         projectId: ctx.session.projectId,
         filter: input.filter ?? [],
+        searchType: input.searchType,
         searchQuery: input.searchQuery ?? undefined,
         limit: 1,
         page: 0,
       });
-      return { totalCount };
+
+      return {
+        totalCount: count,
+      };
     }),
   metrics: protectedProjectProcedure
     .input(
@@ -194,6 +202,9 @@ export const traceRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       return {
         ...ctx.trace,
+        metadata: ctx.trace.metadata
+          ? JSON.stringify(ctx.trace.metadata)
+          : undefined,
         input: ctx.trace.input ? JSON.stringify(ctx.trace.input) : undefined,
         output: ctx.trace.output ? JSON.stringify(ctx.trace.output) : undefined,
       };
@@ -253,14 +264,21 @@ export const traceRouter = createTRPCRouter({
 
       return {
         ...ctx.trace,
+        metadata: ctx.trace.metadata
+          ? JSON.stringify(ctx.trace.metadata)
+          : null,
         input: ctx.trace.input ? JSON.stringify(ctx.trace.input) : null,
         output: ctx.trace.output ? JSON.stringify(ctx.trace.output) : null,
-        scores: validatedScores,
+        scores: validatedScores.map((s) => ({
+          ...s,
+          metadata: s.metadata ? JSON.stringify(s.metadata) : undefined,
+        })),
         latency: latencyMs !== undefined ? latencyMs / 1000 : undefined,
         observations: observations.map((o) => ({
           ...o,
           output: undefined,
           input: undefined, // this is not queried above.
+          metadata: o.metadata ? JSON.stringify(o.metadata) : undefined,
         })) as ObservationReturnTypeWithMetadata[],
       };
     }),

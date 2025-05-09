@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
-import type { APIScore, TraceDomain } from "@langfuse/shared";
+import type { APIScoreV2, TraceDomain } from "@langfuse/shared";
 import type { ObservationReturnTypeWithMetadata } from "@/src/server/api/routers/traces";
 
 import { TraceGraphCanvas } from "./TraceGraphCanvas";
@@ -14,16 +14,32 @@ import {
 
 type TraceGraphViewProps = {
   observations: ObservationReturnTypeWithMetadata[];
-  trace: Omit<TraceDomain, "input" | "output"> & {
+  trace: Omit<TraceDomain, "input" | "output" | "metadata"> & {
     input: string | null;
     output: string | null;
+    metadata: string | null;
   };
-  scores: APIScore[];
+  scores: APIScoreV2[];
   projectId: string;
 };
 
 export const TraceGraphView: React.FC<TraceGraphViewProps> = (props) => {
-  const { observations } = props;
+  const { observations: rawObservations } = props;
+  const observations = rawObservations.map((o) => {
+    let parsedMetadata = o.metadata;
+
+    try {
+      parsedMetadata =
+        o.metadata && typeof o.metadata === "string"
+          ? JSON.parse(o.metadata)
+          : o.metadata;
+    } catch {
+      return o;
+    }
+
+    return { ...o, metadata: parsedMetadata };
+  });
+
   const [selectedNodeName, setSelectedNodeName] = useState<string | null>(null);
   const { graph, nodeToParentObservationMap } = useMemo(
     () => parseGraph({ observations }),

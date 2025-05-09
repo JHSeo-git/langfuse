@@ -134,6 +134,12 @@ export default function DashboardDetail() {
       internal: "internalValue",
     },
     {
+      name: "Score Name",
+      id: "scoreName",
+      type: "string",
+      internal: "internalValue",
+    },
+    {
       name: "Tags",
       id: "tags",
       type: "arrayOptions",
@@ -150,6 +156,12 @@ export default function DashboardDetail() {
       name: "Session",
       id: "session",
       type: "string",
+      internal: "internalValue",
+    },
+    {
+      name: "Metadata",
+      id: "metadata",
+      type: "stringObject",
       internal: "internalValue",
     },
     {
