@@ -169,3 +169,7 @@ export const LegacyPromptSchema = z.union([
   LegacyChatPromptSchema.extend({ isActive: z.boolean() }),
 ]);
 export type LegacyValidatedPrompt = z.infer<typeof LegacyPromptSchema>;
+
+export const DeletePromptSchema = z.object({
+  promptName: z.string(),
+});

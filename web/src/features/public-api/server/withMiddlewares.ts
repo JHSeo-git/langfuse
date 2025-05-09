@@ -11,7 +11,7 @@ type Handlers = {
   [Method in HttpMethod]?: (
     req: NextApiRequest,
     res: NextApiResponse,
-  ) => Promise<void>;
+  ) => Promise<void | NextApiResponse>;
 };
 
 const defaultHandler = () => {

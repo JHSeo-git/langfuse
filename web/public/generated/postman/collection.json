@@ -2119,6 +2119,39 @@
             }
           },
           "response": []
+        },
+        {
+          "_type": "endpoint",
+          "name": "Delete",
+          "request": {
+            "description": "Delete a prompt with the given `promptName`",
+            "url": {
+              "raw": "{{baseUrl}}/api/public/v2/prompts/:promptName",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "public",
+                "v2",
+                "prompts",
+                ":promptName"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "promptName",
+                  "value": "",
+                  "description": "The name of the prompt"
+                }
+              ]
+            },
+            "header": [],
+            "method": "DELETE",
+            "auth": null,
+            "body": null
+          },
+          "response": []
         }
       ]
     },

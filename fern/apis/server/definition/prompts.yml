@@ -57,6 +57,15 @@ service:
       request: CreatePromptRequest
       response: Prompt
 
+    delete:
+      docs: Delete a prompt with the given `promptName`
+      method: DELETE
+      path: /prompts/{promptName}
+      path-parameters:
+        promptName:
+          type: string
+          docs: The name of the prompt
+
 types:
   PromptMetaListResponse:
     properties:
