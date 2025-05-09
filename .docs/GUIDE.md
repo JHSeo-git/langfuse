@@ -81,3 +81,41 @@ pnpm --filter=web run dev # execute command only in one package
 ```bash
 pnpm run db:migrate -- --name <name of the migration>
 ```
+
+## openapi with fern
+
+### 1. fern install global or use npx
+
+```bash
+npm install -g fern-api
+fern generate --api server
+```
+
+```bash
+npx fern-api generate --api server
+```
+
+### 2. fern generate
+
+**server**
+
+- web/public/generated/api
+- web/public/generated/postman
+- generated/python
+
+```bash
+fern generate --api server
+# or
+# npx fern-api generate --api server
+
+✔ Directory /Users/jhseo/Workspace/src/github.com/jhseo-git/langfuse/generated/python contains existing files that may be overwritten. Continue? yes
+[server]: ✓ All checks passed
+[server]: fernapi/fern-openapi Downloaded to /Users/jhseo/Workspace/src/github.com/jhseo-git/langfuse/web/public/generated/api
+[server]: fernapi/fern-postman Downloaded to /Users/jhseo/Workspace/src/github.com/jhseo-git/langfuse/web/public/generated/postman
+[server]: fernapi/fern-python-sdk Downloaded to /Users/jhseo/Workspace/src/github.com/jhseo-git/langfuse/generated/python
+┌─
+│ ✓  fernapi/fern-openapi
+│ ✓  fernapi/fern-python-sdk
+│ ✓  fernapi/fern-postman
+└─
+```
