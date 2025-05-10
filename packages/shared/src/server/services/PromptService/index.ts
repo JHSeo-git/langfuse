@@ -90,6 +90,9 @@ export class PromptService {
             has: label,
           },
         },
+        orderBy: {
+          version: "desc",
+        },
       });
 
       return this.resolvePrompt(prompt);
