@@ -2070,7 +2070,7 @@
           "request": {
             "description": "Get a list of prompt names with versions and labels",
             "url": {
-              "raw": "{{baseUrl}}/api/public/v2/prompts?name=&label=&tag=&page=&limit=&fromUpdatedAt=&toUpdatedAt=",
+              "raw": "{{baseUrl}}/api/public/v2/prompts?name=&label=&allOfLabels=&tag=&anyOfTags=&page=&limit=&fromUpdatedAt=&toUpdatedAt=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2092,9 +2092,19 @@
                   "description": null
                 },
                 {
+                  "key": "allOfLabels",
+                  "value": "",
+                  "description": "Filter by all of the given labels (\",\" separated list)"
+                },
+                {
                   "key": "tag",
                   "value": "",
                   "description": null
+                },
+                {
+                  "key": "anyOfTags",
+                  "value": "",
+                  "description": "Filter by any of the given tags (\",\" separated list)"
                 },
                 {
                   "key": "page",

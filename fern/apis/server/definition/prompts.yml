@@ -34,7 +34,13 @@ service:
         query-parameters:
           name: optional<string>
           label: optional<string>
+          allOfLabels:
+            type: optional<string>
+            docs: Filter by all of the given labels ("," separated list)
           tag: optional<string>
+          anyOfTags:
+            type: optional<string>
+            docs: Filter by any of the given tags ("," separated list)
           page:
             type: optional<integer>
             docs: page number, starts at 1

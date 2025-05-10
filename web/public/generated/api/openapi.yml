@@ -2791,8 +2791,22 @@ paths:
           schema:
             type: string
             nullable: true
+        - name: allOfLabels
+          in: query
+          description: Filter by all of the given labels ("," separated list)
+          required: false
+          schema:
+            type: string
+            nullable: true
         - name: tag
           in: query
+          required: false
+          schema:
+            type: string
+            nullable: true
+        - name: anyOfTags
+          in: query
+          description: Filter by any of the given tags ("," separated list)
           required: false
           schema:
             type: string

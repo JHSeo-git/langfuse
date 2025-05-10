@@ -111,7 +111,16 @@ export type PromptsMetaResponse = {
 };
 
 const getPromptsFilterCondition = (params: GetPromptsMetaType) => {
-  const { name, version, label, tag, fromUpdatedAt, toUpdatedAt } = params;
+  const {
+    name,
+    version,
+    label,
+    allOfLabels,
+    tag,
+    anyOfTags,
+    fromUpdatedAt,
+    toUpdatedAt,
+  } = params;
   const filters: FilterState = [];
 
   if (name) {
@@ -141,12 +150,36 @@ const getPromptsFilterCondition = (params: GetPromptsMetaType) => {
     });
   }
 
+  if (allOfLabels) {
+    filters.push({
+      column: "labels",
+      type: "arrayOptions",
+      operator: "all of",
+      value: allOfLabels
+        .split(",")
+        .map((label) => label.trim())
+        .filter(Boolean),
+    });
+  }
+
   if (tag) {
     filters.push({
       column: "tags",
       type: "arrayOptions",
       operator: "any of",
       value: [tag],
+    });
+  }
+
+  if (anyOfTags) {
+    filters.push({
+      column: "tags",
+      type: "arrayOptions",
+      operator: "any of",
+      value: anyOfTags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
     });
   }
 
