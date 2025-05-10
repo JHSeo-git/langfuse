@@ -82,20 +82,29 @@ pnpm --filter=web run dev # execute command only in one package
 pnpm run db:migrate -- --name <name of the migration>
 ```
 
-## openapi with fern
+## generate api document with fern
 
-### 1. fern install global or use npx
+신규 Public API 개발 시 API 문서화를 위해 아래 명령어를 실행합니다.
 
-```bash
-npm install -g fern-api
-fern generate --api server
-```
+> fern sdk를 이용합니다.
+
+### 1. fern API Definition 작성
+
+- `fern/apis/server/definition/*.yml` 파일 참고
+
+### 2. fern install global or use npx
 
 ```bash
 npx fern-api generate --api server
 ```
 
-### 2. fern generate
+```bash
+# 또는 global 설치 후 사용
+npm install -g fern-api
+fern generate --api server
+```
+
+### 3. fern generate
 
 **server**
 
@@ -104,9 +113,9 @@ npx fern-api generate --api server
 - generated/python
 
 ```bash
-fern generate --api server
+npx fern-api generate --api server
 # or
-# npx fern-api generate --api server
+# fern generate --api server
 
 ✔ Directory /Users/jhseo/Workspace/src/github.com/jhseo-git/langfuse/generated/python contains existing files that may be overwritten. Continue? yes
 [server]: ✓ All checks passed

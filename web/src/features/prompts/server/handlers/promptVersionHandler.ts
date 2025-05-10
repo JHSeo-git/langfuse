@@ -5,6 +5,7 @@ import { withMiddlewares } from "@/src/features/public-api/server/withMiddleware
 import { createAuthedProjectAPIRoute } from "@/src/features/public-api/server/createAuthedProjectAPIRoute";
 import { updatePrompt } from "@/src/features/prompts/server/actions/updatePrompts";
 import { auditLog } from "@/src/features/audit-logs/auditLog";
+import { deletePromptVersion } from "@/src/features/prompts/server/actions/deletePromptVersion";
 
 const UpdatePromptBodySchema = z.object({
   newLabels: z
@@ -12,6 +13,10 @@ const UpdatePromptBodySchema = z.object({
     .refine((labels) => !labels.includes("latest"), {
       message: "Label 'latest' is always assigned to the latest prompt version",
     }),
+});
+
+const DeletePromptResponseSchema = z.object({
+  deletedPromptId: z.string(),
 });
 
 export const promptVersionHandler = withMiddlewares({
@@ -42,6 +47,26 @@ export const promptVersionHandler = withMiddlewares({
       logger.info(`Prompt updated ${JSON.stringify(prompt)}`);
 
       return prompt;
+    },
+  }),
+  DELETE: createAuthedProjectAPIRoute({
+    name: "Delete Prompt Version",
+    responseSchema: DeletePromptResponseSchema,
+    fn: async ({ req, auth }) => {
+      const projectId = auth.scope.projectId;
+      const { promptName, promptVersion } = req.query;
+
+      const deletedPrompt = await deletePromptVersion({
+        promptName: promptName as string,
+        projectId: projectId,
+        promptVersion: Number(promptVersion),
+        orgId: auth.scope.orgId,
+        apiKeyId: auth.scope.apiKeyId,
+      });
+
+      return {
+        deletedPromptId: deletedPrompt.id,
+      };
     },
   }),
 });

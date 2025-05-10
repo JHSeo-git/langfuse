@@ -8,16 +8,9 @@ import {
 } from "@/src/features/prompts/server/utils/validation";
 import { withMiddlewares } from "@/src/features/public-api/server/withMiddlewares";
 import { authorizePromptRequestOrThrow } from "../utils/authorizePromptRequest";
-import {
-  ForbiddenError,
-  LangfuseConflictError,
-  LangfuseNotFoundError,
-} from "@langfuse/shared";
+import { InvalidRequestError, LangfuseNotFoundError } from "@langfuse/shared";
 import { PRODUCTION_LABEL } from "@/src/features/prompts/constants";
 import { RateLimitService } from "@/src/features/public-api/server/RateLimitService";
-import { hasProjectAccess } from "@/src/features/rbac/utils/checkProjectAccess";
-import { getServerAuthSession } from "@/src/server/auth";
-import { checkHasProtectedLabels } from "@/src/features/prompts/server/utils/checkHasProtectedLabels";
 import { PromptService, redis } from "@langfuse/shared/src/server";
 import { auditLog } from "@/src/features/audit-logs/auditLog";
 
@@ -117,34 +110,9 @@ const deletePromptHandler = async (
       )
       .join("\n");
 
-    throw new LangfuseConflictError(
+    throw new InvalidRequestError(
       `Other prompts are depending on prompt versions you are trying to delete:\n\n${dependencyMessages}\n\nPlease delete the dependent prompts first.`,
     );
-  }
-
-  // Check if any prompt has a protected label
-  const { hasProtectedLabels, protectedLabels } = await checkHasProtectedLabels(
-    {
-      prisma: prisma,
-      projectId: projectId,
-      labelsToCheck: prompts.flatMap((prompt) => prompt.labels),
-    },
-  );
-
-  if (hasProtectedLabels) {
-    const session = await getServerAuthSession({ req, res });
-    if (
-      !hasProjectAccess({
-        session: session,
-        projectId: projectId,
-        scope: "promptProtectedLabels:CUD",
-        forbiddenErrorMessage: `You don't have permission to delete a prompt with a protected label. Please contact your project admin for assistance.\n\n Protected labels are: ${protectedLabels.join(", ")}`,
-      })
-    ) {
-      throw new ForbiddenError(
-        `You don't have permission to delete a prompt with a protected label. Please contact your project admin for assistance.\n\n Protected labels are: ${protectedLabels.join(", ")}`,
-      );
-    }
   }
 
   for (const prompt of prompts) {
@@ -177,7 +145,9 @@ const deletePromptHandler = async (
   // Unlock cache
   await promptService.unlockCache({ projectId, promptName });
 
-  return res.status(204).end();
+  return res.status(200).json({
+    deletedPromptName: promptName,
+  });
 };
 
 export const promptNameHandler = withMiddlewares({
