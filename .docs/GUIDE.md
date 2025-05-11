@@ -128,3 +128,38 @@ npx fern-api generate --api server
 │ ✓  fernapi/fern-postman
 └─
 ```
+
+## 참고
+
+### Langfuse Public API 라이센스 범위
+
+- https://langfuse.com/self-hosting/license-key
+
+| Feature                                                                | Cloud<br/>Free | Cloud<br/>Pro | Cloud<br/>Team | Self-Hosted<br/>OSS | Self-Hosted<br/>Pro | Self-Hosted<br/>Enterprise |
+| ---------------------------------------------------------------------- | -------------- | ------------- | -------------- | ------------------- | ------------------- | -------------------------- |
+| [Tracing & UI](https://langfuse.com/docs/tracing)                      | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [Integrations and SDKs](https://langfuse.com/docs/tracing)             | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [Prompt Management](https://langfuse.com/docs/prompts)                 | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [Analytics / Dashboards](https://langfuse.com/docs/analytics/overview) | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [Datasets](https://langfuse.com/docs/datasets/overview)                | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [Scores](https://langfuse.com/docs/scores/overview)                    | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+| [API access](https://langfuse.com/docs/query-traces)                   | ✅             | ✅            | ✅             | ✅                  | ✅                  | ✅                         |
+
+추가로 일부 상업적으로 라이선스 부가 기능:
+
+| Feature                                                                                       | Cloud<br/>Free | Cloud<br/>Pro | Cloud<br/>Team | Self-Hosted<br/>OSS | Self-Hosted<br/>Pro | Self-Hosted<br/>Enterprise |
+| --------------------------------------------------------------------------------------------- | -------------- | ------------- | -------------- | ------------------- | ------------------- | -------------------------- |
+| [LLM-as-a-Judge evaluations](https://langfuse.com/docs/scores/model-based-evals)              | ✅             | ✅            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [Prompt Playground](https://langfuse.com/docs/playground)                                     | ✅             | ✅            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [Prompt Experiments](https://langfuse.com/docs/datasets/prompt-experiments)                   | ✅             | ✅            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [Annotation Queues](https://langfuse.com/docs/scores/annotation#annotation-queues)            | ✅             | ✅            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [PostHog Integration](https://langfuse.com/docs/analytics/posthog)                            | ✅             | ✅            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [Data Processing Agreement (DPA)](https://langfuse.com/security)                              | 🛑             | ✅            | ✅             | 🛑                  | 🛑                  | ✅                         |
+| [Scheduled Exports to Blob Storage / S3](https://langfuse.com/docs/query-traces#blob-storage) | 🛑             | 🛑            | ✅             | 🛑                  | ✅                  | ✅                         |
+| [SOC2 & ISO27001 Reports](https://langfuse.com/security)                                      | 🛑             | 🛑            | ✅             | 🛑                  | 🛑                  | ✅                         |
+| [Project-level RBAC roles](https://langfuse.com/docs/rbac)                                    | 🛑             | 🛑            | ✅             | 🛑                  | 🛑                  | ✅                         |
+| [Data Retention Policies](https://langfuse.com/docs/data-retention)                           | 🛑             | 🛑            | ✅             | 🛑                  | 🛑                  | ✅                         |
+| [Audit Logs](https://langfuse.com/changelog/2025-01-21-audit-logs)                            | 🛑             | 🛑            | ✅             | 🛑                  | 🛑                  | ✅                         |
+| [UI Customization](https://langfuse.com/self-hosting/ui-customization)                        | 🛑             | 🛑            | 🛑             | 🛑                  | 🛑                  | ✅                         |
+| [Organization Creators](https://langfuse.com/self-hosting/organization-creators)              | 🛑             | 🛑            | 🛑             | 🛑                  | 🛑                  | ✅                         |
+| [Organization Management API](https://langfuse.com/self-hosting/organization-management-api)  | 🛑             | 🛑            | 🛑             | 🛑                  | 🛑                  | ✅                         |
