@@ -34,6 +34,7 @@ import {
 import { env } from "../../env";
 import { TracingSearchType } from "../../interfaces/search";
 import { ClickHouseClientConfigOptions } from "@clickhouse/client";
+import { ObservationType } from "../../domain";
 
 /**
  * Checks if observation exists in clickhouse.
@@ -111,12 +112,18 @@ export const upsertObservation = async (
   });
 };
 
-export const getObservationsForTrace = async (
-  traceId: string,
-  projectId: string,
-  timestamp?: Date,
-  fetchWithInputOutput: boolean = false,
+export type GetObservationsForTraceOpts<IncludeIO extends boolean> = {
+  traceId: string;
+  projectId: string;
+  timestamp?: Date;
+  includeIO?: IncludeIO;
+};
+
+export const getObservationsForTrace = async <IncludeIO extends boolean>(
+  opts: GetObservationsForTraceOpts<IncludeIO>,
 ) => {
+  const { traceId, projectId, timestamp, includeIO = false } = opts;
+
   const query = `
   SELECT
     id,
@@ -128,11 +135,10 @@ export const getObservationsForTrace = async (
     start_time,
     end_time,
     name,
-    metadata,
     level,
     status_message,
     version,
-    ${fetchWithInputOutput ? "input, output," : ""}
+    ${includeIO === true ? "input, output, metadata," : ""}
     provided_model_name,
     internal_model_id,
     model_parameters,
@@ -187,7 +193,7 @@ export const getObservationsForTrace = async (
       }
     }
 
-    const metadataValues = Object.values(observation["metadata"]);
+    const metadataValues = Object.values(observation["metadata"] ?? {});
 
     metadataValues.forEach((value) => {
       if (value && typeof value === "string") {
@@ -202,7 +208,9 @@ export const getObservationsForTrace = async (
     }
   }
 
-  return records.map(convertObservation);
+  return records.map((r) =>
+    convertObservation({ ...r, metadata: r.metadata ?? {} }),
+  );
 };
 
 export const getObservationForTraceIdByName = async (
@@ -271,18 +279,26 @@ export const getObservationForTraceIdByName = async (
   return records.map(convertObservation);
 };
 
-export const getObservationById = async (
-  id: string,
-  projectId: string,
-  fetchWithInputOutput: boolean = false,
-  startTime?: Date,
-) => {
-  const records = await getObservationByIdInternal(
+export const getObservationById = async ({
+  id,
+  projectId,
+  fetchWithInputOutput = false,
+  startTime,
+  type,
+}: {
+  id: string;
+  projectId: string;
+  fetchWithInputOutput?: boolean;
+  startTime?: Date;
+  type?: ObservationType;
+}) => {
+  const records = await getObservationByIdInternal({
     id,
     projectId,
     fetchWithInputOutput,
     startTime,
-  );
+    type,
+  });
   const mapped = records.map(convertObservation);
 
   if (mapped.length === 0) {
@@ -347,12 +363,19 @@ export const getObservationsById = async (
   return records.map(convertObservation);
 };
 
-const getObservationByIdInternal = async (
-  id: string,
-  projectId: string,
-  fetchWithInputOutput: boolean = false,
-  startTime?: Date,
-) => {
+const getObservationByIdInternal = async ({
+  id,
+  projectId,
+  fetchWithInputOutput = false,
+  startTime,
+  type,
+}: {
+  id: string;
+  projectId: string;
+  fetchWithInputOutput?: boolean;
+  startTime?: Date;
+  type?: ObservationType;
+}) => {
   const query = `
   SELECT
     id,
@@ -388,6 +411,7 @@ const getObservationByIdInternal = async (
   WHERE id = {id: String}
   AND project_id = {projectId: String}
   ${startTime ? `AND toDate(start_time) = toDate({startTime: DateTime64(3)})` : ""}
+  ${type ? `AND type = {type: String}` : ""}
   ORDER BY event_ts desc
   LIMIT 1 by id, project_id`;
   return await queryClickhouse<ObservationRecordReadType>({
